@@ -1223,6 +1223,37 @@
     .location-suggest-item:hover .suggest-sub,
     .location-suggest-item.active-suggest .suggest-sub { color: var(--brand); opacity: 0.8; }
     .location-suggest-empty { padding: 12px 14px; color: var(--muted); font-size: 13px; font-weight: 600; }
+    .suggest-closest {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--success);
+      background: var(--success-soft);
+      padding: 2px 6px;
+      border-radius: 999px;
+      margin-left: 4px;
+      vertical-align: middle;
+    }
+
+    .stay-row {
+      display: grid;
+      grid-template-columns: 30px 1fr auto;
+      gap: 10px;
+      align-items: center;
+      padding: 11px;
+      background: var(--bg);
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      margin-bottom: 8px;
+    }
+    .stay-row:last-child { margin-bottom: 0; }
+    .stay-icon { font-size: 16px; text-align: center; }
+    .stay-info { min-width: 0; }
+    .stay-info a { color: inherit; text-decoration: none; font-weight: 700; display: block; }
+    .stay-info a:hover { color: var(--brand); text-decoration: underline; }
+    .stay-info .meta { display: block; margin-top: 2px; }
 
     .flight-head {display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:4px}
     .status.danger-pill {background:var(--danger-soft);color:var(--danger)}
@@ -1507,9 +1538,9 @@
         <div class="topbar"><div><h2>Restaurants and places</h2><p>Keep possibilities separate from the scheduled itinerary.</p></div><button class="secondary" id="shareTrip">Share trip</button></div>
         <div class="trip-context trip-context-slot"></div>
         <div class="hub-grid">
-          <article class="card list-card"><h3>Restaurant checklist</h3><p class="meta">Check restaurants off after visiting—or use this as a shortlist. Tap a name or its 📍 to open a map search for it.</p><div class="checklist" id="restaurantList"></div><div class="inline-add"><input class="field" id="restaurantInput" placeholder="Add a restaurant"><button class="primary" id="addRestaurant">Add</button></div></article>
+          <article class="card list-card"><h3>Restaurant checklist</h3><p class="meta">Check restaurants off after visiting—or use this as a shortlist. Tap a name or its 📍 to open a map search for it.</p><div class="checklist" id="restaurantList"></div><div class="inline-add"><div class="location-autocomplete"><input class="field" id="restaurantInput" placeholder="Add a restaurant" autocomplete="off"><div class="location-suggest-list" id="restaurantSuggestions" hidden></div></div><button class="primary" id="addRestaurant">Add</button></div></article>
           <article class="card list-card"><h3>Restaurant notes</h3><textarea class="field" id="restaurantNotes" rows="12" placeholder="Dietary needs, reservation details, dishes to try, price range..."></textarea><div class="action-row"><button class="secondary" id="saveRestaurantNotes">Save notes</button></div></article>
-          <article class="card list-card"><h3>Places of interest</h3><p class="meta">Ideas do not need a date until you are ready to schedule them. Tap a name or its 📍 to open a map search for it.</p><div class="checklist" id="placesList"></div><div class="inline-add"><input class="field" id="placeInput" placeholder="Add a place"><button class="primary" id="addPlace">Add</button></div></article>
+          <article class="card list-card"><h3>Places of interest</h3><p class="meta">Ideas do not need a date until you are ready to schedule them. Tap a name or its 📍 to open a map search for it.</p><div class="checklist" id="placesList"></div><div class="inline-add"><div class="location-autocomplete"><input class="field" id="placeInput" placeholder="Add a place" autocomplete="off"><div class="location-suggest-list" id="placeSuggestions" hidden></div></div><button class="primary" id="addPlace">Add</button></div></article>
           <article class="card list-card"><h3>Feedback</h3><div class="presence"><span class="presence-dot" style="background:var(--muted)"></span> Notes saved on this device only · not yet shared with other people</div><div id="feedbackList" style="margin-top:14px"></div><textarea class="field" id="feedbackInput" rows="3" placeholder="Add feedback or a suggestion..."></textarea><div class="action-row"><button class="primary" id="addFeedback">Post feedback</button></div></article>
         </div>
       </section>
@@ -1518,11 +1549,26 @@
         <div class="topbar"><div><h2>Travel</h2><p>Flights and step-by-step public transit guidance. Flight details are yours to enter and update — this prototype does not track flights live.</p></div></div>
         <div class="trip-context trip-context-slot"></div>
         <div class="hub-grid">
-          <div id="airportDatalistMount"></div>
           <div class="flight-stack" id="flightCards">
             <div id="flightCardOutbound"></div>
             <div id="flightCardReturn"></div>
           </div>
+          <article class="card list-card">
+            <h3>Where you're staying</h3>
+            <p class="meta">Hotel, Airbnb, or anywhere else — add more than one if you switch locations partway through the trip.</p>
+            <div id="accommodationsList"></div>
+            <div class="inline-add">
+              <div class="location-autocomplete">
+                <input class="field" id="accommodationInput" placeholder="Hotel or Airbnb name" autocomplete="off">
+                <div class="location-suggest-list" id="accommodationSuggestions" hidden></div>
+              </div>
+              <button class="primary" id="addAccommodation">Add</button>
+            </div>
+            <div class="form-grid" style="margin-top:10px;">
+              <div><label for="accommodationCheckIn">Check-in <span style="font-weight:600;text-transform:none;letter-spacing:0;">(optional)</span></label><input class="field" id="accommodationCheckIn" type="date"></div>
+              <div><label for="accommodationCheckOut">Check-out <span style="font-weight:600;text-transform:none;letter-spacing:0;">(optional)</span></label><input class="field" id="accommodationCheckOut" type="date"></div>
+            </div>
+          </article>
           <article class="card list-card"><h3>Sample TTC route</h3><p class="meta">St. Lawrence Market → Illuminarium</p><div class="transit-step"><div class="transit-icon">1</div><div><strong>Walk 4 minutes</strong><span class="meta">To King Street East</span></div></div><div class="transit-step"><div class="transit-icon">🚋</div><div><strong>Take 504 King eastbound</strong><span class="meta">Board at Jarvis St · 3 stops</span></div></div><div class="transit-step"><div class="transit-icon">2</div><div><strong>Exit at Parliament Street</strong><span class="meta">Walk south toward Distillery Lane</span></div></div><div class="transit-step"><div class="transit-icon">3</div><div><strong>Walk 6 minutes</strong><span class="meta">Arrive near the main entrance</span></div></div><div class="action-row"><button class="secondary" data-view="map">View on map</button><a class="primary" href="https://www.google.com/maps/dir/?api=1&origin=St.+Lawrence+Market+Toronto&destination=Illuminarium+Toronto&travelmode=transit" target="_blank" rel="noopener">Live transit route</a></div></article>
           <article class="card list-card"><h3>Transit preferences</h3><p class="meta">Future live integration would show route numbers, stops, transfers, departure times, and disruptions. These two preferences are not yet wired to route calculations in this prototype.</p><label for="transitAgency">Preferred transit agency</label><select class="field" id="transitAgency"><option>TTC — Toronto Transit Commission</option></select><label for="transitPreference">Route preference</label><select class="field" id="transitPreference"><option>Fastest route</option><option>Least walking</option><option>Fewest transfers</option></select></article>
         </div>
@@ -1564,9 +1610,25 @@
         <div class="topbar">
           <div>
             <h2>Settings</h2>
-            <p>Stored on this device only — not shared with anyone else using this app.</p>
+            <p>Sign-in is shared with your travel partner. Everything else here stays on this device only.</p>
           </div>
         </div>
+
+        <article class="card" style="padding:20px;margin-bottom:18px;" id="accountCard">
+          <div class="eyebrow">Account</div>
+          <p class="meta">Sign in to enable shared editing with a travel partner. Your trips stay local on this device until that's turned on — this step only sets up who you are.</p>
+          <div id="accountSignedOut">
+            <button type="button" class="primary" id="googleSignInBtn">Sign in with Google</button>
+          </div>
+          <div id="accountSignedIn" hidden style="display:flex;align-items:center;gap:12px;">
+            <img id="accountPhoto" src="" alt="" style="width:44px;height:44px;border-radius:50%;display:none;object-fit:cover;" />
+            <div style="flex:1;min-width:0;">
+              <strong id="accountName" style="display:block;"></strong>
+              <span class="meta" id="accountEmail"></span>
+            </div>
+            <button type="button" class="secondary" id="googleSignOutBtn">Sign out</button>
+          </div>
+        </article>
 
         <article class="card" style="padding:20px;margin-bottom:18px;">
           <div class="eyebrow">Your name</div>
@@ -1640,8 +1702,11 @@
 
         <div class="full">
           <label for="activityLocation">Location <span style="font-weight:600;text-transform:none;letter-spacing:0;">(optional)</span></label>
-          <input id="activityLocation" class="field" placeholder="Leave blank to just use the name above" />
-          <div class="field-hint" style="color:var(--muted);font-size:12.5px;margin-top:6px;">Only needed if the name alone wouldn’t find it on a map — e.g. a specific address or branch.</div>
+          <div class="location-autocomplete">
+            <input id="activityLocation" class="field" placeholder="Leave blank to just use the name above" autocomplete="off" />
+            <div class="location-suggest-list" id="activityLocationSuggestions" hidden></div>
+          </div>
+          <div class="field-hint" style="color:var(--muted);font-size:12.5px;margin-top:6px;">Only needed if the name alone wouldn’t find it on a map — e.g. a specific address or branch. For a chain (Starbucks, Tim Hortons), picking a suggestion locks in the exact location instead of a name-only search.</div>
         </div>
 
         <div>
@@ -1790,6 +1855,17 @@
   <div class="toast-stack" id="toastStack" aria-live="polite"></div>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+
+  <!-- Firebase's "compat" build, not the modular/ES-import version the console
+       shows by default — this project has no build step, and compat exposes
+       a plain global (`firebase`), the same pattern already used for Leaflet
+       (`L`). Firestore is loaded now too, even though it isn't used yet, so
+       the next phase (moving trip data live) doesn't need another round of
+       script-tag changes. Analytics was intentionally dropped — it's not
+       needed for auth or sync, and it's a tracking library nobody asked for. -->
+  <script src="https://www.gstatic.com/firebasejs/12.15.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/12.15.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore-compat.js"></script>
 
   <script>
     const defaultActivities = [
@@ -2479,7 +2555,7 @@
       document.getElementById("activityNameError").classList.remove("show");
 
       const data = {
-        id: id || String(Date.now()),
+        id: id || uid("act"),
         name,
         date: document.getElementById("activityDate").value,
         time: document.getElementById("activityTime").value,
@@ -2576,6 +2652,54 @@
     window.addEventListener("resize", handleViewportChange);
     window.addEventListener("orientationchange", handleViewportChange);
 
+    /* ---------------------------------------------------------------
+       Real route-following on the map.
+
+       Previously the line between stops was a straight point-to-point
+       connector — not how anyone actually walks between places. This asks
+       OSRM (Open Source Routing Machine) for an actual walking route
+       following real streets.
+
+       Honest caveat: OSRM's public router.project-osrm.org is a free,
+       keyless COMMUNITY DEMO service — not an official, production-grade
+       API like Wikipedia/Nominatim/Open-Meteo elsewhere in this app. It can
+       be slow, rate-limited, or occasionally unavailable, and its own docs
+       say so. So the design here never depends on it: a straight dashed
+       line is drawn immediately (the same connector as before, so the map
+       is never blank while waiting), and only gets silently upgraded to the
+       real route if OSRM actually responds in time. If it doesn't, the
+       dashed line simply stays — never a broken-looking map either way.
+    --------------------------------------------------------------- */
+    let routeRequestToken = 0;
+
+    async function fetchWalkingRoute(coordsLatLng) {
+      if (coordsLatLng.length < 2) return null;
+      const coordStr = coordsLatLng.map(([lat, lng]) => `${lng},${lat}`).join(";");
+      try {
+        const res = await fetchWithTimeout(
+          `https://router.project-osrm.org/route/v1/foot/${coordStr}?overview=full&geometries=geojson`,
+          6000
+        );
+        if (!res.ok) return null;
+        const data = await res.json();
+        const coords = data?.routes?.[0]?.geometry?.coordinates;
+        if (!Array.isArray(coords) || !coords.length) return null;
+        return coords.map(([lng, lat]) => [lat, lng]); // GeoJSON is [lng,lat]; Leaflet wants [lat,lng]
+      } catch {
+        return null;
+      }
+    }
+
+    async function upgradeRouteToRealPath(coords) {
+      const myToken = ++routeRequestToken; // invalidated if the day/trip changes before this resolves
+      const realPath = await fetchWalkingRoute(coords);
+      if (myToken !== routeRequestToken) return; // a newer request has since superseded this one
+      if (!realPath || !map) return; // OSRM failed or timed out — the dashed straight line stays as-is
+
+      if (routeLine) routeLine.remove();
+      routeLine = L.polyline(realPath, { weight: 4 }).addTo(map);
+    }
+
     function renderMap() {
       if (!map) return;
 
@@ -2595,8 +2719,14 @@
         coords.push([activity.lat, activity.lng]);
       });
 
+      routeRequestToken++; // invalidate any route request still in flight for a previous day/trip
+
       if (coords.length > 1) {
-        routeLine = L.polyline(coords, { weight: 4 }).addTo(map);
+        // Instant dashed placeholder — the map is never blank while the real
+        // route request is in flight, and this is also the permanent result
+        // if that request fails.
+        routeLine = L.polyline(coords, { weight: 4, dashArray: "6 8", opacity: 0.65 }).addTo(map);
+        upgradeRouteToRealPath(coords);
       }
 
       if (coords.length) {
@@ -2633,6 +2763,110 @@
         });
       });
     }
+
+    // Date.now() alone can produce the exact same millisecond for two rapid
+    // additions (confirmed: two quick "Add" taps could generate identical
+    // ids, silently corrupting whichever list — later operations like delete
+    // would then match and remove/edit the WRONG item, or both at once). A
+    // short random suffix makes a collision astronomically unlikely.
+    function uid(prefix) {
+      return `${prefix}${Date.now()}${Math.random().toString(36).slice(2, 8)}`;
+    }
+
+    /* ---------------------------------------------------------------
+       Firebase: sign-in (Phase 2 of the shared-editing project).
+
+       This phase only establishes identity — confirming who's signed in and
+       showing that in Settings. It does NOT yet touch trip data; everything
+       still saves to localStorage exactly as before. The next phase moves
+       trip data into Firestore and makes it live between devices.
+
+       Uses signInWithRedirect rather than signInWithPopup: popups are
+       unreliable on mobile browsers (commonly blocked outright), while a
+       redirect is the same flow Google's own apps use on phones and behaves
+       consistently. The tradeoff is a full page navigation away and back —
+       which is why sign-in state is read via onAuthStateChanged (fires with
+       the current state on every load, restored from Firebase's own
+       persistence) rather than assumed from a returned promise value.
+    --------------------------------------------------------------- */
+    let firebaseAuth = null;
+
+    function renderAccountUI(user) {
+      const signedOut = document.getElementById("accountSignedOut");
+      const signedIn = document.getElementById("accountSignedIn");
+      if (!signedOut || !signedIn) return;
+
+      if (user) {
+        signedOut.hidden = true;
+        signedIn.hidden = false;
+        document.getElementById("accountName").textContent = user.displayName || "Signed in";
+        document.getElementById("accountEmail").textContent = user.email || "";
+        const photo = document.getElementById("accountPhoto");
+        if (photo) {
+          if (user.photoURL) {
+            photo.src = user.photoURL;
+            photo.style.display = "block";
+          } else {
+            photo.style.display = "none";
+          }
+        }
+      } else {
+        signedOut.hidden = false;
+        signedIn.hidden = true;
+      }
+    }
+
+    function initFirebase() {
+      if (typeof firebase === "undefined") {
+        // The SDK script tags failed to load (no network, ad blocker, etc.)
+        // — degrade quietly rather than breaking the rest of the app, which
+        // doesn't depend on any of this yet.
+        console.warn("Firebase SDK did not load — sign-in is unavailable this session.");
+        return;
+      }
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyDvNjS2_-y3bcKil89NLqLF_X5lkCwRvHU",
+        authDomain: "simple-trip-planning-571ed.firebaseapp.com",
+        projectId: "simple-trip-planning-571ed",
+        storageBucket: "simple-trip-planning-571ed.firebasestorage.app",
+        messagingSenderId: "814883463992",
+        appId: "1:814883463992:web:d2faa45e4be9931026d7cd"
+      };
+
+      try {
+        firebase.initializeApp(firebaseConfig);
+        firebaseAuth = firebase.auth();
+      } catch (err) {
+        console.warn("Firebase init failed:", err);
+        return;
+      }
+
+      // Catches the result of a completed redirect sign-in, and surfaces the
+      // REAL error (e.g. "auth/unauthorized-domain") instead of failing
+      // silently — same visibility principle already used for weather/fact
+      // fetch errors elsewhere in this app.
+      firebaseAuth.getRedirectResult().catch(err => {
+        showToast(`Sign-in error: ${err.message}`, "danger");
+      });
+
+      firebaseAuth.onAuthStateChanged(user => renderAccountUI(user));
+    }
+
+    document.getElementById("googleSignInBtn")?.addEventListener("click", () => {
+      if (!firebaseAuth) {
+        showToast("Sign-in isn't available right now — check your connection and reload.", "danger");
+        return;
+      }
+      const provider = new firebase.auth.GoogleAuthProvider();
+      firebaseAuth.signInWithRedirect(provider);
+    });
+
+    document.getElementById("googleSignOutBtn")?.addEventListener("click", () => {
+      firebaseAuth?.signOut();
+    });
+
+    initFirebase();
 
     function escapeHtml(value) {
       return String(value ?? "")
@@ -2825,7 +3059,25 @@
       "“I will not be discussing what happened at the gondola. We move forward as a family.”",
       "“I have achieved a personal record: lost, but with excellent posture.”",
       "“At this point the suitcase is less luggage and more a legal dependent.”",
-      "“I whispered 'we're almost there' to myself for the fourth hour in a row and I believed it every time.”"
+      "“I whispered 'we're almost there' to myself for the fourth hour in a row and I believed it every time.”",
+      "“I have made a blood pact with a vending machine and I do not regret it.”",
+      "“The itinerary was a democracy. It is now a dictatorship and I am extremely at peace with this.”",
+      "“I do not know where we are, but I have made a friend, and he also does not know where we are.”",
+      "“Somewhere back there I lost a sock, a sense of direction, and the will to make further decisions today.”",
+      "“I have decided the pigeon is following me on purpose and, honestly, good for him.”",
+      "“We are not lost. We are simply experiencing the destination from an unscheduled angle.”",
+      "“I told the group 'five more minutes' forty minutes ago and everyone has simply accepted this as weather.”",
+      "“I have named the rental car. She is judgmental and she is right to be.”",
+      "“At some point today I became fluent in a language I do not speak, entirely through gestures and desperation.”",
+      "“The itinerary said 'optional.' The itinerary has never met my sense of guilt.”",
+      "“I have eaten something today that I cannot name, in a good way, possibly.”",
+      "“I no longer have a bedtime. I have a time zone and a grudge.”",
+      "“The map app rerouted me four times and I choose to see this as character growth.”",
+      "“I have accepted that the hotel pillow and I will never see eye to eye, literally, structurally.”",
+      "“Somewhere in this city there is a version of me that made a reservation, and I have failed her completely.”",
+      "“I have developed a personal relationship with a stray cat and frankly a deeper one than with my travel budget.”",
+      "“The itinerary has become a suggestion, the suggestion has become a rumor, and the rumor has left the group chat.”",
+      "“I said I'd pace myself. That was five pastries and one questionable staircase ago.”"
     ];
     /* ---------------------------------------------------------------
        Weather.
@@ -3147,7 +3399,7 @@
     const channel="BroadcastChannel"in window?new BroadcastChannel("next-stop-v4"):null;
     if(channel){channel.onmessage=()=>{restaurants=JSON.parse(localStorage.getItem("nextStopRestaurantsV4")||"[]");places=JSON.parse(localStorage.getItem("nextStopPlacesV4")||"[]");feedback=JSON.parse(localStorage.getItem("nextStopFeedbackV4")||"[]");renderLists()}}
     function broadcastUpdate(){if(channel)channel.postMessage("updated")}
-    function renderSimpleList(id,items,type){const c=document.getElementById(id);if(!c)return;c.innerHTML=items.length?items.map(item=>`<div class="list-row ${item.done?"done":""}"><button class="mini-check ${item.done?"checked":""}" data-list-check="${type}:${item.id}" aria-label="Mark ${escapeHtml(item.text)} as ${item.done?"not visited":"visited"}">${item.done?"✓":""}</button><a class="list-text" href="${mapsSearchUrl(item.text)}" target="_blank" rel="noopener" title="Open a map search for ${escapeHtml(item.text)}">${escapeHtml(item.text)}</a><div class="list-row-actions"><a class="icon-btn" href="${mapsSearchUrl(item.text)}" target="_blank" rel="noopener" title="View ${escapeHtml(item.text)} on map" aria-label="View ${escapeHtml(item.text)} on map">📍</a><button class="icon-btn icon-btn-danger" data-list-delete="${type}:${item.id}" title="Remove ${escapeHtml(item.text)}" aria-label="Remove ${escapeHtml(item.text)}">×</button></div></div>`).join(""):`<div class="empty" style="padding:20px;">Nothing added yet.</div>`;c.querySelectorAll("[data-list-check]").forEach(b=>b.addEventListener("click",()=>{const[k,i]=b.dataset.listCheck.split(":");const t=k==="restaurant"?restaurants:places;const x=t.find(v=>v.id===i);if(x)x.done=!x.done;saveLists()}));c.querySelectorAll("[data-list-delete]").forEach(b=>b.addEventListener("click",()=>{const[k,i]=b.dataset.listDelete.split(":");if(k==="restaurant")restaurants=restaurants.filter(x=>x.id!==i);else places=places.filter(x=>x.id!==i);saveLists()}))}
+    function renderSimpleList(id,items,type){const c=document.getElementById(id);if(!c)return;c.innerHTML=items.length?items.map(item=>{const mapHref=(item.lat!=null&&item.lng!=null)?`https://www.google.com/maps/search/?api=1&query=${item.lat},${item.lng}`:mapsSearchUrl(item.text);const titleSuffix=item.address?` (${escapeHtml(item.address)})`:"";return `<div class="list-row ${item.done?"done":""}"><button class="mini-check ${item.done?"checked":""}" data-list-check="${type}:${item.id}" aria-label="Mark ${escapeHtml(item.text)} as ${item.done?"not visited":"visited"}">${item.done?"✓":""}</button><a class="list-text" href="${mapHref}" target="_blank" rel="noopener" title="Open a map search for ${escapeHtml(item.text)}${titleSuffix}">${escapeHtml(item.text)}</a><div class="list-row-actions"><a class="icon-btn" href="${mapHref}" target="_blank" rel="noopener" title="View ${escapeHtml(item.text)} on map" aria-label="View ${escapeHtml(item.text)} on map">📍</a><button class="icon-btn icon-btn-danger" data-list-delete="${type}:${item.id}" title="Remove ${escapeHtml(item.text)}" aria-label="Remove ${escapeHtml(item.text)}">×</button></div></div>`;}).join(""):`<div class="empty" style="padding:20px;">Nothing added yet.</div>`;c.querySelectorAll("[data-list-check]").forEach(b=>b.addEventListener("click",()=>{const[k,i]=b.dataset.listCheck.split(":");const t=k==="restaurant"?restaurants:places;const x=t.find(v=>v.id===i);if(x)x.done=!x.done;saveLists()}));c.querySelectorAll("[data-list-delete]").forEach(b=>b.addEventListener("click",()=>{const[k,i]=b.dataset.listDelete.split(":");if(k==="restaurant")restaurants=restaurants.filter(x=>x.id!==i);else places=places.filter(x=>x.id!==i);saveLists()}))}
     function saveLists(){localStorage.setItem("nextStopRestaurantsV4",JSON.stringify(restaurants));localStorage.setItem("nextStopPlacesV4",JSON.stringify(places));renderLists();broadcastUpdate()}
     function renderLists(){renderSimpleList("restaurantList",restaurants,"restaurant");renderSimpleList("placesList",places,"place");const f=document.getElementById("feedbackList");if(f)f.innerHTML=feedback.map(x=>`<div class="feedback-item"><strong>${escapeHtml(x.author)}</strong>${escapeHtml(x.text)}<div class="meta">${escapeHtml(x.time)}</div></div>`).join("")}
     /* Quote rotation uses a "shuffle bag" rather than picking at random.
@@ -3188,6 +3440,144 @@
       const controller = new AbortController();
       const timer = setTimeout(() => controller.abort(), ms);
       return fetch(url, { signal: controller.signal }).finally(() => clearTimeout(timer));
+    }
+
+    /* ---------------------------------------------------------------
+       Nearby-places search (chain disambiguation).
+
+       Typing "Tim Hortons" or "Starbucks" is genuinely ambiguous — there can
+       be several locations in the same city. This searches OpenStreetMap's
+       free, keyless Nominatim service (already used elsewhere in this app)
+       biased to the trip's own city, returns multiple candidates sorted by
+       straight-line distance from the trip's center, and lets picking one
+       lock in that EXACT location (via its coordinates) instead of a
+       name-only search that could land on the wrong branch. The nearest
+       match is always first in the list — "default to the closest one".
+    --------------------------------------------------------------- */
+    function haversineKm(lat1, lon1, lat2, lon2) {
+      const toRad = d => (d * Math.PI) / 180;
+      const R = 6371;
+      const dLat = toRad(lat2 - lat1);
+      const dLon = toRad(lon2 - lon1);
+      const a = Math.sin(dLat / 2) ** 2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) ** 2;
+      return 2 * R * Math.asin(Math.sqrt(Math.min(1, a)));
+    }
+
+    // The trip's own geocoded coordinates, already fetched for weather — reused
+    // here as the "how far away is this" reference point rather than making a
+    // second geocoding call for the same city.
+    function tripReferenceCoords() {
+      if (liveWeather?.coords && liveWeather.location === currentTripLocation()) {
+        return liveWeather.coords;
+      }
+      return null;
+    }
+
+    async function searchNearbyPlaces(query, refCoords) {
+      const trimmed = String(query || "").trim();
+      if (trimmed.length < 2) return [];
+
+      let url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(trimmed)}&format=json&limit=6&addressdetails=1`;
+      if (refCoords) {
+        // Bias results to roughly a 30km box around the trip's city, so
+        // "Tim Hortons" returns branches near the trip, not worldwide.
+        const delta = 0.3;
+        url += `&viewbox=${refCoords.lng - delta},${refCoords.lat + delta},${refCoords.lng + delta},${refCoords.lat - delta}&bounded=1`;
+      }
+
+      let res;
+      try {
+        res = await fetchWithTimeout(url);
+      } catch {
+        return []; // a failed lookup just means no suggestions, not an error worth surfacing
+      }
+      if (!res.ok) return [];
+      let data;
+      try { data = await res.json(); } catch { return []; }
+      if (!Array.isArray(data)) return [];
+
+      const results = data
+        .map(r => {
+          const rlat = parseFloat(r.lat);
+          const rlon = parseFloat(r.lon);
+          return {
+            label: (r.display_name || trimmed).split(",")[0].trim(),
+            address: r.display_name || "",
+            lat: rlat,
+            lng: rlon,
+            distanceKm: refCoords ? haversineKm(refCoords.lat, refCoords.lng, rlat, rlon) : null
+          };
+        })
+        .filter(r => Number.isFinite(r.lat) && Number.isFinite(r.lng));
+
+      if (refCoords) results.sort((a, b) => (a.distanceKm ?? Infinity) - (b.distanceKm ?? Infinity));
+      return results;
+    }
+
+    function formatDistance(km) {
+      if (km == null) return "";
+      return km < 1 ? `${Math.round(km * 1000)} m away` : `${km.toFixed(1)} km away`;
+    }
+
+    // Reusable picker dropdown: wires an input + result-list pair to a live
+    // nearby-places search, and calls onSelect(candidate) with either the
+    // chosen result or null (when the person types something new, which
+    // invalidates whatever was previously selected).
+    function setupPlacePicker(inputId, listId, onSelect) {
+      const input = document.getElementById(inputId);
+      const list = document.getElementById(listId);
+      if (!input || !list) return;
+
+      let debounceTimer = null;
+      let currentResults = [];
+
+      function hideList() {
+        list.hidden = true;
+        list.innerHTML = "";
+        currentResults = [];
+      }
+
+      function renderResults(results) {
+        currentResults = results;
+        if (!results.length) {
+          list.innerHTML = `<div class="location-suggest-empty">No nearby matches — you can still add this as plain text.</div>`;
+          list.hidden = false;
+          return;
+        }
+        list.innerHTML = results.map((r, i) => `
+          <button type="button" class="location-suggest-item" data-index="${i}">
+            ${escapeHtml(r.label)}${i === 0 && r.distanceKm != null ? ' <span class="suggest-closest">closest</span>' : ""}
+            <span class="suggest-sub">${escapeHtml(r.address)}${r.distanceKm != null ? " · " + formatDistance(r.distanceKm) : ""}</span>
+          </button>
+        `).join("");
+        list.hidden = false;
+
+        list.querySelectorAll("[data-index]").forEach(btn => {
+          btn.addEventListener("mousedown", event => {
+            event.preventDefault();
+            const r = currentResults[Number(btn.dataset.index)];
+            if (r) {
+              input.value = r.label;
+              onSelect(r);
+            }
+            hideList();
+          });
+        });
+      }
+
+      input.addEventListener("input", () => {
+        clearTimeout(debounceTimer);
+        onSelect(null); // typing invalidates whatever was previously selected
+        const query = input.value.trim();
+        if (query.length < 2) { hideList(); return; }
+        debounceTimer = setTimeout(async () => {
+          const results = await searchNearbyPlaces(query, tripReferenceCoords());
+          renderResults(results);
+        }, 350);
+      });
+
+      input.addEventListener("blur", () => setTimeout(hideList, 150));
+      input.addEventListener("keydown", event => { if (event.key === "Escape") hideList(); });
     }
 
     // Fetches candidate sentences about `place` from a given Wikimedia
@@ -3264,7 +3654,27 @@
           .replace(/={2,}[^=]+={2,}/g, " ") // strip "== Section header ==" markers
           .split(/(?<=[.!?])\s+/)
           .map(s => s.trim())
-          .filter(s => s.length >= 25 && s.length <= 220 && !/^\d+$/.test(s));
+          .filter(s => {
+            if (s.length < 25 || s.length > 220) return false;
+            if (/^\d+$/.test(s)) return false;
+
+            // A character-length check alone let bare names/list items
+            // through — "Gardner Museum of Ceramic Art" is 30 characters and
+            // technically "long enough", but it's a list item, not a fact.
+            // Wikivoyage's "Do"/"See" sections are often literal bullet
+            // lists of attraction names with little or no surrounding prose,
+            // and the plaintext extraction can turn a list entry into
+            // something that merely *looks* like a sentence.
+            const words = s.split(/\s+/).filter(Boolean);
+            if (words.length < 8) return false; // too short to read as an actual sentence
+
+            // A real sentence almost always has at least one lowercase word
+            // (an article, preposition, verb). A string of Title Case Words
+            // with none is the signature of a bare proper-noun list entry.
+            if (!words.some(w => /^[a-z]/.test(w))) return false;
+
+            return true;
+          });
       }
 
       const leadSentences = splitSentences(lead);
@@ -3523,8 +3933,58 @@
     // and return "" every single time, regardless of the trip's real data.
     // That's why the very first thing anyone saw was "Set a trip location to
     // see a fact about it." even for Toronto, which has always had one.
-    document.getElementById("addRestaurant")?.addEventListener("click",()=>{const i=document.getElementById("restaurantInput");if(!i.value.trim())return;restaurants.push({id:"r"+Date.now(),text:i.value.trim(),done:false});i.value="";saveLists()});
-    document.getElementById("addPlace")?.addEventListener("click",()=>{const i=document.getElementById("placeInput");if(!i.value.trim())return;places.push({id:"p"+Date.now(),text:i.value.trim(),done:false});i.value="";saveLists()});
+    let pendingRestaurantPlace = null;
+    let pendingPlaceOfInterest = null;
+    setupPlacePicker("restaurantInput", "restaurantSuggestions", candidate => { pendingRestaurantPlace = candidate; });
+    setupPlacePicker("placeInput", "placeSuggestions", candidate => { pendingPlaceOfInterest = candidate; });
+    setupPlacePicker("activityLocation", "activityLocationSuggestions", candidate => {
+      const latField = document.getElementById("activityLat");
+      const lngField = document.getElementById("activityLng");
+      if (candidate) {
+        if (latField) latField.value = candidate.lat;
+        if (lngField) lngField.value = candidate.lng;
+      } else {
+        // Typing something new invalidates whatever coordinates were picked
+        // before — leaving them in place would silently point directions at
+        // the WRONG place once the text no longer matches them.
+        if (latField) latField.value = "";
+        if (lngField) lngField.value = "";
+      }
+    });
+
+    document.getElementById("addRestaurant")?.addEventListener("click",()=>{
+      const i=document.getElementById("restaurantInput");
+      const text=i.value.trim();
+      if(!text)return;
+      const item={id:uid("r"),text,done:false};
+      // Only attach coordinates if the selected candidate still matches what's
+      // in the field — prevents a stale pick from a previous, since-edited
+      // query silently attaching the wrong location.
+      if(pendingRestaurantPlace && pendingRestaurantPlace.label===text){
+        item.lat=pendingRestaurantPlace.lat;
+        item.lng=pendingRestaurantPlace.lng;
+        item.address=pendingRestaurantPlace.address;
+      }
+      restaurants.push(item);
+      i.value="";
+      pendingRestaurantPlace=null;
+      saveLists();
+    });
+    document.getElementById("addPlace")?.addEventListener("click",()=>{
+      const i=document.getElementById("placeInput");
+      const text=i.value.trim();
+      if(!text)return;
+      const item={id:uid("p"),text,done:false};
+      if(pendingPlaceOfInterest && pendingPlaceOfInterest.label===text){
+        item.lat=pendingPlaceOfInterest.lat;
+        item.lng=pendingPlaceOfInterest.lng;
+        item.address=pendingPlaceOfInterest.address;
+      }
+      places.push(item);
+      i.value="";
+      pendingPlaceOfInterest=null;
+      saveLists();
+    });
     document.getElementById("addFeedback")?.addEventListener("click",()=>{const i=document.getElementById("feedbackInput");if(!i.value.trim())return;feedback.unshift({author:"Guest",text:i.value.trim(),time:new Date().toLocaleString()});localStorage.setItem("nextStopFeedbackV4",JSON.stringify(feedback));i.value="";renderLists();broadcastUpdate()});
     document.getElementById("saveRestaurantNotes")?.addEventListener("click",()=>{localStorage.setItem("nextStopRestaurantNotesV4",document.getElementById("restaurantNotes").value);showToast("Restaurant notes saved.")});
     document.getElementById("restaurantNotes").value=localStorage.getItem("nextStopRestaurantNotesV4")||"";
@@ -3580,6 +4040,96 @@
     }
 
     let flights = loadFlights();
+
+    /* ---------------------------------------------------------------
+       Accommodations ("where you're staying").
+
+       Keyed by trip id, same pattern as flights — each trip maps to an
+       ARRAY of stays, since a trip can involve switching hotels/Airbnbs
+       partway through, which was explicitly asked for.
+    --------------------------------------------------------------- */
+    let accommodations = JSON.parse(localStorage.getItem("nextStopAccommodationsV1") || "null") || {};
+
+    function saveAccommodations() {
+      try { localStorage.setItem("nextStopAccommodationsV1", JSON.stringify(accommodations)); } catch {}
+    }
+
+    function tripAccommodations() {
+      return accommodations[currentTripId()] || [];
+    }
+
+    function stayDatesLabel(stay) {
+      if (stay.checkIn && stay.checkOut) return formatTripDates(stay.checkIn, stay.checkOut);
+      const fmt = d => new Date(d + "T12:00:00").toLocaleDateString([], { month: "short", day: "numeric" });
+      if (stay.checkIn) return `Check in ${fmt(stay.checkIn)}`;
+      if (stay.checkOut) return `Check out ${fmt(stay.checkOut)}`;
+      return "";
+    }
+
+    function renderAccommodations() {
+      const list = document.getElementById("accommodationsList");
+      if (!list) return;
+      const stays = tripAccommodations();
+
+      list.innerHTML = stays.length ? stays.map(stay => {
+        const mapHref = (stay.lat != null && stay.lng != null)
+          ? `https://www.google.com/maps/search/?api=1&query=${stay.lat},${stay.lng}`
+          : mapsSearchUrl(stay.name);
+        const dates = stayDatesLabel(stay);
+        return `<div class="stay-row">
+          <span class="stay-icon" aria-hidden="true">🛏️</span>
+          <div class="stay-info">
+            <a href="${mapHref}" target="_blank" rel="noopener" title="Open a map search for ${escapeHtml(stay.name)}">${escapeHtml(stay.name)}</a>
+            ${dates ? `<span class="meta">${escapeHtml(dates)}</span>` : ""}
+          </div>
+          <div class="list-row-actions">
+            <a class="icon-btn" href="${mapHref}" target="_blank" rel="noopener" title="View on map" aria-label="View ${escapeHtml(stay.name)} on map">📍</a>
+            <button class="icon-btn icon-btn-danger" data-remove-stay="${stay.id}" title="Remove ${escapeHtml(stay.name)}" aria-label="Remove ${escapeHtml(stay.name)}">×</button>
+          </div>
+        </div>`;
+      }).join("") : `<div class="empty" style="padding:16px;">No stays added yet.</div>`;
+
+      list.querySelectorAll("[data-remove-stay]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const tripId = currentTripId();
+          accommodations[tripId] = (accommodations[tripId] || []).filter(s => s.id !== btn.dataset.removeStay);
+          saveAccommodations();
+          renderAccommodations();
+        });
+      });
+    }
+
+    let pendingAccommodationPlace = null;
+    setupPlacePicker("accommodationInput", "accommodationSuggestions", candidate => { pendingAccommodationPlace = candidate; });
+
+    document.getElementById("addAccommodation")?.addEventListener("click", () => {
+      const nameInput = document.getElementById("accommodationInput");
+      const name = nameInput.value.trim();
+      if (!name) return;
+
+      const tripId = currentTripId();
+      const stay = {
+        id: uid("stay"),
+        name,
+        checkIn: document.getElementById("accommodationCheckIn").value || "",
+        checkOut: document.getElementById("accommodationCheckOut").value || ""
+      };
+      if (pendingAccommodationPlace && pendingAccommodationPlace.label === name) {
+        stay.lat = pendingAccommodationPlace.lat;
+        stay.lng = pendingAccommodationPlace.lng;
+        stay.address = pendingAccommodationPlace.address;
+      }
+
+      accommodations[tripId] = accommodations[tripId] || [];
+      accommodations[tripId].push(stay);
+      saveAccommodations();
+
+      nameInput.value = "";
+      document.getElementById("accommodationCheckIn").value = "";
+      document.getElementById("accommodationCheckOut").value = "";
+      pendingAccommodationPlace = null;
+      renderAccommodations();
+    });
 
     function tripFlight(direction) {
       const id = currentTripId();
@@ -3649,10 +4199,59 @@
 
     function airportLabel([code, city, name]) { return `${name} — ${code}`; }
 
-    function airportDatalistHtml() {
-      return `<datalist id="airportCodeList">${AIRPORTS.map(a =>
-        `<option value="${a[0]}" label="${escapeHtml(airportLabel(a))}"></option>`
-      ).join("")}</datalist>`;
+    function airportCandidatesForQuery(query) {
+      const q = String(query || "").trim().toLowerCase();
+      if (!q) return [];
+      return AIRPORTS
+        .filter(a => a[0].toLowerCase().includes(q) || a[1].toLowerCase().includes(q) || a[2].toLowerCase().includes(q))
+        .slice(0, 8)
+        .map(a => ({ value: a[0], label: airportLabel(a), sub: a[2] }));
+    }
+
+    // Static-list variant of the same dropdown pattern used for cities and
+    // chain-location search — no network call needed (the airport list is
+    // small and already loaded), just instant client-side filtering, with
+    // full control over showing/hiding the list (fixing the datalist
+    // ghosting issue this replaced).
+    function setupStaticSuggest(inputId, listId, getCandidates, onSelect) {
+      const input = document.getElementById(inputId);
+      const list = document.getElementById(listId);
+      if (!input || !list) return;
+
+      function hideList() {
+        list.hidden = true;
+        list.innerHTML = "";
+      }
+
+      function showResults(candidates) {
+        if (!candidates.length) { hideList(); return; }
+        list.innerHTML = candidates.map((c, i) => `
+          <button type="button" class="location-suggest-item" data-index="${i}">
+            ${escapeHtml(c.label)}
+            <span class="suggest-sub">${escapeHtml(c.sub || "")}</span>
+          </button>
+        `).join("");
+        list.hidden = false;
+        list.querySelectorAll("[data-index]").forEach(btn => {
+          btn.addEventListener("mousedown", event => {
+            event.preventDefault();
+            const c = candidates[Number(btn.dataset.index)];
+            if (c) {
+              input.value = c.value;
+              if (onSelect) onSelect(c);
+            }
+            hideList();
+          });
+        });
+      }
+
+      input.addEventListener("input", () => {
+        const query = input.value.trim();
+        if (!query) { hideList(); return; }
+        showResults(getCandidates(query));
+      });
+      input.addEventListener("blur", () => setTimeout(hideList, 150));
+      input.addEventListener("keydown", event => { if (event.key === "Escape") hideList(); });
     }
 
     // Resolves free text to a code only when there's exactly one confident
@@ -3682,11 +4281,25 @@
             ${opts.options.map(o => `<option ${o === f[key] ? "selected" : ""}>${escapeHtml(o)}</option>`).join("")}
           </select></div>`;
       }
-      return `<div><label for="${id}">${escapeHtml(label)}</label>
-        <input class="field" id="${id}" type="${type}" data-flight="${dir}" data-key="${key}"
+      const inputHtml = `<input class="field" id="${id}" type="${type}" data-flight="${dir}" data-key="${key}"
           value="${escapeHtml(f[key] || "")}" placeholder="${escapeHtml(opts.placeholder || "")}"
-          ${opts.maxlength ? `maxlength="${opts.maxlength}"` : ""}
-          ${opts.list ? `list="${opts.list}"` : ""}></div>`;
+          ${opts.maxlength ? `maxlength="${opts.maxlength}"` : ""} autocomplete="off">`;
+
+      if (opts.airportPicker) {
+        // A custom dropdown instead of a native <datalist> — datalist's own
+        // suggestion overlay is outside JS/CSS control, and its dismiss-on-
+        // blur behavior is known to be unreliable on some mobile browsers
+        // (a lingering "ghost" suggestion that only clears once you tap an
+        // option). This dropdown is the same reliable, fully-controlled
+        // pattern already used for city and chain-location search.
+        return `<div><label for="${id}">${escapeHtml(label)}</label>
+          <div class="location-autocomplete">
+            ${inputHtml}
+            <div class="location-suggest-list" id="${id}-suggestions" hidden></div>
+          </div></div>`;
+      }
+
+      return `<div><label for="${id}">${escapeHtml(label)}</label>${inputHtml}</div>`;
     }
 
     function flightCard(dir, title) {
@@ -3719,8 +4332,8 @@
         <div class="form-grid">
           ${flightField(dir, "airline", "Airline", { placeholder: "Air Canada" })}
           ${flightField(dir, "number", "Flight number", { placeholder: "AC 759" })}
-          ${flightField(dir, "fromCode", "From", { placeholder: "Seattle, or SEA if you know it", list: "airportCodeList" })}
-          ${flightField(dir, "toCode", "To", { placeholder: "Seattle, or SEA if you know it", list: "airportCodeList" })}
+          ${flightField(dir, "fromCode", "From", { placeholder: "Seattle, or SEA if you know it", airportPicker: true })}
+          ${flightField(dir, "toCode", "To", { placeholder: "Seattle, or SEA if you know it", airportPicker: true })}
           ${flightField(dir, "date", "Date", { type: "date" })}
           ${flightField(dir, "status", "Status", { options: FLIGHT_STATUSES })}
           ${flightField(dir, "fromTime", "Departs", { type: "time" })}
@@ -3743,6 +4356,68 @@
     // flight would silently wipe out anything typed but not yet saved in the
     // return flight's fields, since the whole shared container's innerHTML
     // was replaced. Each direction now only touches its own DOM.
+    /* ---------------------------------------------------------------
+       Auto-populate the itinerary from saved flight info.
+
+       Requested: when flight times are saved, the day's schedule should
+       show "leaving at this time, arriving at this airport at that time"
+       without adding it as a separate manual activity.
+
+       Design: each direction gets exactly one auto-managed activity, found
+       by a stable id (flight-{tripId}-{direction}), which is created or
+       updated every time that flight is saved — never duplicated. The
+       flight form is treated as the source of truth: if you edit the
+       auto-created activity directly, saving the flight again will
+       overwrite that edit with the current flight data. Deleting the
+       flight (Clear) removes its itinerary entry too.
+
+       Timezone honesty: departure and arrival times are just the local
+       times as typed, with no timezone math attempted — computing true
+       elapsed flight duration from two local times across timezones
+       without knowing the timezones themselves would silently produce
+       wrong numbers. Both times are shown plainly instead of turned into a
+       duration that might be lying.
+    --------------------------------------------------------------- */
+    function upsertFlightActivity(tripId, direction, flight) {
+      const activityId = `flight-${tripId}-${direction}`;
+      const existingIndex = activities.findIndex(a => a.id === activityId);
+      const hasEnoughInfo = flight && flight.date && (flight.fromTime || flight.fromCode || flight.airline);
+
+      if (!hasEnoughInfo) {
+        // Not enough info to place a meaningful itinerary entry — remove any
+        // previously auto-created one rather than leaving stale data behind.
+        if (existingIndex !== -1) activities.splice(existingIndex, 1);
+        return;
+      }
+
+      const routeLabel = [flight.fromCode, flight.toCode].filter(Boolean).join(" → ");
+      const noteParts = [];
+      const airlineBit = [flight.airline, flight.number].filter(Boolean).join(" ");
+      if (airlineBit) noteParts.push(airlineBit);
+      if (flight.toTime) noteParts.push(`Arrives ${formatTime(flight.toTime)}${flight.toCode ? " " + flight.toCode : ""}`);
+      if (flight.confirmation) noteParts.push(`Confirmation ${flight.confirmation}`);
+
+      const activity = {
+        id: activityId,
+        tripId,
+        date: flight.date,
+        name: `✈️ Flight ${direction === "outbound" ? "to" : "home"}${flight.toCode ? ` (${flight.toCode})` : ""}`,
+        time: flight.fromTime || "",
+        flex: !flight.fromTime,
+        duration: "Flight",
+        location: routeLabel,
+        notes: noteParts.join(" · "),
+        website: "",
+        ticket: "",
+        lat: null,
+        lng: null,
+        completed: existingIndex !== -1 ? activities[existingIndex].completed : false
+      };
+
+      if (existingIndex !== -1) activities[existingIndex] = activity;
+      else activities.push(activity);
+    }
+
     function renderFlightCard(dir) {
       const mount = document.getElementById(dir === "outbound" ? "flightCardOutbound" : "flightCardReturn");
       if (!mount) return;
@@ -3750,6 +4425,10 @@
       mount.innerHTML = flightCard(dir, title);
 
       mount.querySelectorAll('input[data-key="fromCode"], input[data-key="toCode"]').forEach(input => {
+        setupStaticSuggest(input.id, `${input.id}-suggestions`, airportCandidatesForQuery, candidate => {
+          showToast(candidate.label);
+        });
+
         // Resolve on blur (reliable, but only fires once you leave the field)...
         input.addEventListener("blur", () => {
           const typed = input.value.trim();
@@ -3796,6 +4475,9 @@
         record.updatedAt = Date.now();
         flights[id][dir] = record;
         saveFlights();
+        upsertFlightActivity(id, dir, record);
+        saveActivities();
+        renderActivities();
         renderFlightCard(dir); // only this card — the sibling's unsaved input is untouched
         showToast(`${dir === "outbound" ? "Outbound" : "Return"} flight saved.`);
       });
@@ -3806,18 +4488,15 @@
         const id = currentTripId();
         if (flights[id]) delete flights[id][dir];
         saveFlights();
+        upsertFlightActivity(id, dir, null); // also removes the auto-created itinerary entry
+        saveActivities();
+        renderActivities();
         renderFlightCard(dir);
         showToast("Flight cleared.", "danger");
       });
     }
 
     function renderFlights() {
-      // The airport datalist is shared by both cards, so it's rendered once
-      // into its own slot rather than being duplicated inside each card's
-      // markup — otherwise it would be destroyed and recreated every time
-      // just one direction saves.
-      const datalistMount = document.getElementById("airportDatalistMount");
-      if (datalistMount && !datalistMount.innerHTML) datalistMount.innerHTML = airportDatalistHtml();
       renderFlightCard("outbound");
       renderFlightCard("return");
     }
@@ -3889,6 +4568,7 @@
       renderActivities();
       renderMap();
       renderFlights();
+      renderAccommodations();
     }
 
     /* ---------------------------------------------------------------
@@ -4493,7 +5173,7 @@
       if (!name) return;
 
       const defaultDate = parent?.startDate || new Date().toISOString().slice(0, 10);
-      const id = "trip-" + Date.now();
+      const id = uid("trip-");
 
       trips.push({
         id,
@@ -4531,6 +5211,7 @@
     refreshWeather();
     refreshCityFacts();
     renderFlights();
+    renderAccommodations();
 
     // Quote and fact render here — not earlier — because currentTripLocation()
     // needs `trips` and `selectedTripId` to already exist. renderFact() shows
